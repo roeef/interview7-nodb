@@ -1,0 +1,88 @@
+<p>
+  grid works!
+</p>
+
+<div class="example-container mat-elevation-z8">
+  <div class="example-header">
+    <mat-input-container floatPlaceholder="never">
+      <input matInput #filter placeholder="Filter users">
+    </mat-input-container>
+    <div *ngIf="!hasChanged">
+      <button mat-raised-button color="primary" (click)="addGrade()">ADD NEW GRADE</button>
+      <button mat-raised-button	color="warn" (click)="deletedSelected()" [disabled]="selection.isEmpty()">DELETE SELECTED GRADE</button>
+    </div>
+    <div *ngIf="hasChanged">
+      <button mat-raised-button color="primary" (click)="save()">SAVE CHANGE</button>
+      <button mat-raised-button color="warn" (click)="discard()">DISCARD CHANGES</button>
+    </div>
+
+  </div>
+
+  <!--<div class="example-header example-selection-header"-->
+       <!--*ngIf="!selection.isEmpty()">-->
+    <!--{{selection.selected.length}}-->
+    <!--{{selection.selected.length == 1 ? 'user' : 'users'}}-->
+    <!--selected-->
+  <!--</div>-->
+
+  <mat-table #table [dataSource]="dataSource" matSort>
+    <!--'studentId', 'firstName', 'lastName', 'grade', 'course', 'gradeDate'-->
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="studentId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.studentId}} </mat-cell>
+    </ng-container>
+
+
+    <!-- First Name Column -->
+    <ng-container matColumnDef="firstName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.firstName}} </mat-cell>
+    </ng-container>
+
+    <!-- Last Name Column -->
+    <ng-container matColumnDef="lastName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.lastName}} </mat-cell>
+      <!--[style.color]="row.color"-->
+    </ng-container>
+
+    <!-- Course Column -->
+    <ng-container matColumnDef="course">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Course </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.course}} </mat-cell>
+    </ng-container>
+
+    <!-- course Grade -->
+    <ng-container matColumnDef="grade">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Grade </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.grade}} </mat-cell>
+    </ng-container>
+
+    <!-- course Grade -->
+    <ng-container matColumnDef="date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> G-Date </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.date | date:'shortDate'}} </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+             [class.selected-row]="selection.isSelected(row)"
+             (click)="selection.toggle(row)">
+    </mat-row>
+  </mat-table>
+
+  <div class="example-no-results"
+       [style.display]="dataSource?.renderedData.length == 0 ? '' : 'none'">
+    No Students grades found
+  </div>
+
+  <mat-paginator #paginator
+                 [length]="dataSource?.filteredData.length"
+                 [pageIndex]="0"
+                 [pageSize]="5"
+                 [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>

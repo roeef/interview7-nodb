@@ -1,0 +1,72 @@
+import { Injectable } from '@angular/core';
+import Student from '../../models/student';
+import Grade from '../../models/grade';
+import {StudentService} from './student.service';
+import {SelectionChange, SelectionModel} from "@angular/cdk/collections";
+import {Subject} from "rxjs/Subject";
+
+class DetailsState {
+  grade: Grade = new Grade();
+  get student() { return this.grade.student; }
+  hasCahnged = false;
+  isNew = true;
+}
+
+class GridState {
+  selection = new SelectionModel<Grade>(false, []);
+}
+
+@Injectable()
+export class UiStatesService {
+  detailsState: DetailsState = new DetailsState();
+  grid: GridState = new GridState();
+  constructor(private student: StudentService) {
+    this.grid.selection.onChange.subscribe(x => {
+      console.log("Selection Changed");
+      // On Selection Change check if a new selection is availble for editing
+      if (x.added[0]) {
+        // Copy object to seperate from grid... TODO consider moving copy to before slection would protect block changes
+        Object.assign(this.detailsState.grade, x.added[0]);
+        this.detailsState.grade.student = Object.assign(new Student(), x.added[0].student);
+        this.detailsState.grade.date = Object.assign(new Date(), x.added[0].date);
+
+        // change from new to edit mode
+        this.detailsState.isNew = false;
+        this.detailsState.hasCahnged = false;
+      } else if (this.grid.selection.selected.length === 0) {
+        // an Item was unselected switch back to new "User" in the details
+        this.detailsState.grade = new Grade();
+        // Cancel Edit mode
+        this.detailsState.isNew = true;
+        this.detailsState.hasCahnged = false;
+      }
+    });
+    //     .addListener(
+    //     new ChangeListener<Tab>() {
+    //   @Override
+    //   public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+    //       System.out.println("Tab Selection changed");
+    //     }
+    //   }
+    // );
+  }
+
+  addGrade() {
+      this.grid.selection.clear();
+      this.saveGrade();
+  }
+
+  saveGrade() {
+    console.log(this.detailsState.grade);
+    console.log(this.detailsState.grade.student);
+
+    let grade = new Grade();
+    this.student.addGrade(Object.assign(grade, this.detailsState.grade));
+    this.grid.selection.clear();
+    this.grid.selection.toggle(grade);
+  }
+
+  discard() {
+
+  }
+}

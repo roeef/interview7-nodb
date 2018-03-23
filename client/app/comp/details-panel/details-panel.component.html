@@ -1,0 +1,61 @@
+<p>
+Details:
+</p>
+
+<form class="example-container" (input)="state.hasCahnged=true"> <!--for more advanced form settings - [formGroup]="options">-->
+  <mat-form-field>
+    <mat-label>ID</mat-label>
+    <input matInput placeholder="#ID" [(ngModel)]="state.student.studentId" name="id">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>First Name</mat-label>
+    <input matInput [(ngModel)]="state.student.first_name" name="first">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Last Name</mat-label>
+    <input matInput [(ngModel)]="student.last_name" name="last">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="youruser@mailprovider.com" [formControl]="emailFormControl" [(ngModel)]="student.email" name="email">
+    <mat-error *ngIf="emailFormControl.invalid && emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+      Please enter a valid email address
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.invalid &&  emailFormControl.hasError('required')">
+      Email is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="student.date" name="student_date">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Address</mat-label>
+    <input matInput [(ngModel)]="student.address" name="address">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Country</mat-label>
+    <input matInput [(ngModel)]="student.country" name="country">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Zip</mat-label>
+    <input matInput [(ngModel)]="student.zip" name="zip">
+  </mat-form-field>
+  <mat-divider></mat-divider>
+
+  <mat-form-field>
+    <mat-label>Course</mat-label>
+    <input matInput [(ngModel)]="grade.course" name="course">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Grade</mat-label>
+    <input matInput [(ngModel)]="grade.grade" name="grade">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [matDatepicker]="picker2" placeholder="Date of Grade" [(ngModel)]="grade.date" name="grade_date">
+    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+    <mat-datepicker #picker2></mat-datepicker>
+  </mat-form-field>
+</form>
