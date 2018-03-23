@@ -56,28 +56,6 @@ export class GridComponent implements OnInit {
       });
   }
 
-  // isAllSelected(): boolean {
-  //   if (!this.dataSource) { return false; }
-  //   if (this.selection.isEmpty()) { return false; }
-  //
-  //   if (this.filter.nativeElement.value) {
-  //     return this.selection.selected.length == this.dataSource.renderedData.length;
-  //   } else {
-  //     return this.selection.selected.length == this.exampleDatabase.data.length;
-  //   }
-  // }
-  // For Select All option (used for now only in test)
-  // masterToggle() {
-  //   if (!this.dataSource) { return; }
-  //
-  //   if (this.isAllSelected()) {
-  //     this.selection.clear();
-  //   } else if (this.filter.nativeElement.value) {
-  //     this.dataSource.renderedData.forEach(data => this.selection.select(data.studentId.toString()));
-  //   } else {
-  //     this.exampleDatabase.data.forEach(data => this.selection.select(data.studentId.toString()));
-  //   }
-  // }
 
   deletedSelected() {
     // Easly supports multi-select (just enable multi select on selection decleration loop on all selected array
@@ -131,13 +109,13 @@ export class ExampleDatabase {
     const name =
       NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' +
       NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
-      const student = new Student((Math.round(Math.random() * 100000)).toString(), 'F' + name, 'L' + name, new Date(), 'email' + name,
-        'address' + name, 'zip' + name, 'count' + name, []);
+    const student = new Student((Math.round(Math.random() * 100000)).toString(), 'F' + name, 'L' + name, new Date(), 'email' + name,
+      'address' + name, 'zip' + name, 'count' + name, []);
     return new Grade('c' + name,
       Math.round(Math.random() * 100),
       new Date(),
       student
-      );
+    );
   }
 }
 
@@ -177,12 +155,150 @@ export class ExampleDataSource extends DataSource<any> {
     return Observable.merge(...displayDataChanges).map(() => {
       // Filter data
       this.filteredData = this._exampleDatabase.data.slice().filter((item: Grade) => {
-        console.log("item - ", item);
-        console.log("item fn- ", item.firstName);
-        console.log("item ln- ", item.lastName);
-        console.log("item to lc- ", (item.firstName + item.lastName).toLowerCase());
-        const searchStr = (item.firstName + item.lastName).toLowerCase();
-        return searchStr.indexOf(this.filter.toLowerCase()) != -1;
+        /**
+         * search to if all items in search terms appear in in search string
+         * will return FALSE if one of the term doesn't appear in the string otherwise will return true
+         * @param {string} searchStr
+         * @param {string[]} searchTerms array of terms that will check if they appear in the searchSTR
+         * @returns {boolean}
+         */
+        function checkFilter(searchStr: string, searchTerms: string[]) {
+          if (searchTerms && searchStr) {
+            for (const term of searchTerms) {
+              if (searchStr.toLowerCase().indexOf(term) == -1) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+
+        function checkGeneralFilter(dataCell: Object, searchTerms: string[], convertorFunction) {
+          for (let i = 0; i < searchTerms.length; i++) {
+            if (searchTerms[i].startsWith('>')) {
+              console.log('check number starting');
+              // forward from the operator either by slicing or by incrementing the index
+              if (searchTerms[i].length == 1) {
+                i++;
+              } else {
+                searchTerms[i] = searchTerms[i].slice(1, searchTerms[i].length);
+              }
+              if (!(dataCell > convertorFunction(searchTerms[i]))) {
+                console.log('check number - false', searchTerms[i], dataCell, i, searchTerms);
+                return false;
+              }
+            } else if (searchTerms[i].startsWith('<')) {
+              // forward from the operator either by slicing or by incrementing the index
+              if (searchTerms[i].length == 1) {
+                i++;
+              } else {
+                searchTerms[i] = searchTerms[i].slice(1, searchTerms[i].length);
+              }
+              if (!(dataCell < convertorFunction(searchTerms[i]))) {
+                return false;
+              }
+            } else {
+              if (searchTerms[i].startsWith('=')) {
+                // forward from the operator either by slicing or by incrementing the index
+                if (searchTerms[i].length == 1) {
+                  i++;
+                } else {
+                  searchTerms[i] = searchTerms[i].slice(1, searchTerms[i].length);
+                }
+              }
+              if (!(dataCell == convertorFunction(searchTerms[i]))) {
+                return false;
+              }
+            }
+          }
+          console.log('check number - returned true');
+          return true;
+        }
+
+        const filterString = this.filter.toLowerCase();
+        const i = filterString.indexOf(':');
+        if (i == -1) {
+          // search each word in the search bar and see if it exists in one of the textual fields
+          const searchStr = ([item.firstName, item.lastName, item.course, item.studentId, item.student ? item.student.country : '']
+            .join(' ')).toLowerCase();
+
+          for (const i of filterString.split(/[\s,:.-]+/)) {
+            if (searchStr.indexOf(i) == -1) {
+              return false;
+            }
+          }
+          return true;
+        } else {
+          console.log('advanced filter');
+          const allTerms = filterString.split(':');
+          for (let idx = allTerms.length - 2 ; idx >= 0 ; idx--) {
+            const beforeOperator = allTerms[idx].split(/[\s,:.-]+/);
+            const searchTerms = allTerms[idx + 1].split(/[\s,:]+/);
+
+            // if were not the last operator remove the last word for search which should be the column name
+            if (idx != allTerms.length - 2) {
+              searchTerms.splice(searchTerms.length - 1, 1);
+            }
+
+
+            if (beforeOperator.length > 0 && searchTerms.length > 0) {
+              console.log('advanced filter start', beforeOperator, searchTerms);
+
+              const searchByColumn = beforeOperator[beforeOperator.length - 1];
+              switch (searchByColumn) {
+                case 'name': {
+                  if (!checkFilter(item.firstName + ' ' + item.lastName, searchTerms)) {
+                    console.log('noName', item.firstName + ' ' + item.lastName, searchTerms);
+                    return false;
+                  }
+                  break;
+                }
+                case 'id': {
+                  if (!checkFilter(item.studentId, searchTerms)) {
+                    return false;
+                  }
+                  break;
+                }
+                case 'course': {
+                  if (!checkFilter(item.course, searchTerms)) {
+                    return false;
+                  }
+                  break;
+                }
+                case 'email': {
+                  if (item.student) {
+                    if (!checkFilter(item.student.email, searchTerms)) {
+                      return false;
+                    }
+                  }
+                  break;
+                }
+                case 'country': {
+                  if (item.student) {
+                    if (!checkFilter(item.student.country, searchTerms)) {
+                      return false;
+                    }
+                  }
+                  break;
+                }
+                case 'grade': {
+                  if (!checkGeneralFilter(item.grade, searchTerms, parseInt)) {
+                    return false;
+                  }
+                  break;
+                }
+                case 'date': {
+                  if (!checkGeneralFilter(item.date, searchTerms, x => new Date(x))) {
+                    return false;
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          return true;
+        }
+
       });
 
       // Sort filtered data
