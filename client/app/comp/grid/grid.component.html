@@ -78,7 +78,7 @@
       </mat-paginator>
 
     </mat-sidenav-content>
-    <mat-sidenav #sidenav mode="side" opened="false" align="end" class="mat-elevation-z12">
+    <mat-sidenav #sidenav mode="side" [opened]="!selection.isEmpty()" align="end" class="mat-elevation-z12">
       <app-details-panel></app-details-panel>
     </mat-sidenav>
   </mat-sidenav-container>
