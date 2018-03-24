@@ -7,9 +7,9 @@ import {NotFoundComponent} from '../comp/not-found/not-found.component';
 import {HomeComponent} from '../comp/home/home.component';
 
 const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'data', component: DataComponent },
-  { path: 'stats', component: StatsComponent },
+  { path: '', redirectTo: 'data', pathMatch: 'full' },
+  { path: 'data', component: DataComponent},
+  { path: 'stats', component: StatsComponent},
   { path: '**', component: NotFoundComponent }
 ];
 
