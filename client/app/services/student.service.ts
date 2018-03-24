@@ -1,16 +1,33 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import Grade from '../../models/grade';
 import Student from '../../models/student';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {students} from "../../models/mock.data";
 
 
 @Injectable()
 export class StudentService {
-
-  constructor(private afs: AngularFirestore) { }
   grades: Grade[] = [];
   students: Student[] = [];
+  constructor(private afs: AngularFirestore) {
+    // For generating Mocks for dev test usage you run a few:
+    // for (let i = 0; i < 100; i++) { this.addUser(); }
+    for (const student of students) {
+      const newS = new Student();
+      Object.assign(newS, student);
+      newS.date = new Date(newS.date);
+      // newS.grades = [];
+      for (const g of student.grades) {
+        const newG = new Grade();
+        Object.assign(newG, g);
+        newG.date = new Date(newG.date);
+        newG.student = newS;
+        this.addOrUpdate(newG);
+      }
+    }
+  }
+
 
   /** Stream that emits whenever the data has been modified. */
   studDataChange: BehaviorSubject<Student[]> = new BehaviorSubject<Student[]>([]);
@@ -25,12 +42,13 @@ export class StudentService {
   private gradesPath = 'grades';
   private studentsPath = 'students';
 
-  addGrade(gradeData: Grade) {
+  addOrUpdate(gradeData: Grade) {
     console.log('addStudent Started');
-    if (!this.students[gradeData.student.dbId]) {
-      this.students[gradeData.student.dbId] = gradeData.student;
+    if (!this.students[gradeData.student.studentId]) {
+      this.students[gradeData.student.studentId] = gradeData.student;
+      this.studDataChange.next(this.students);
     }
-    this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
+    // this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
 
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
@@ -58,8 +76,7 @@ export class StudentService {
     // return this.afs.doc(`${this.gradesPath}/${id}`).delete();
   }
 
-  getStudents() {
-    console.log('getStudents');
+  getGrades() {
     return this.gradeDataChange;
     // return this.afs.collection(this.gradesPath, ref => ref.orderBy('studentId')).
     // snapshotChanges().map( changes => {
@@ -70,5 +87,8 @@ export class StudentService {
     //     return {id, ...data};
     //   });
     // });
+  }
+  getStudents() {
+    return this.studDataChange;
   }
 }

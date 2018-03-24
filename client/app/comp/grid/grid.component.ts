@@ -44,8 +44,15 @@ export class GridComponent implements OnInit {
     this.state.dataSource = ds;
   }
 
+  get leng() {
+    return this.dataSource ?
+      (this.dataSource.filteredData ?
+        this.dataSource.filteredData.length : null) : null;
+  }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+
 
   ngOnInit() {
     if (!this.dataSource) {

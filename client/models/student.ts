@@ -14,7 +14,7 @@ export default class Student {
     this.address = address;
     this.zip = zip;
     this.country = country;
-    this.grades = grades;
+    // this.grades = grades;
   }
   dbId?: string;
   studentId: string;
@@ -25,5 +25,5 @@ export default class Student {
   address: string;
   zip?: string;
   country?: string;
-  grades: Grade[] = [];
+  // grades: Grade[] = [];
 }

@@ -58,7 +58,7 @@ export class UiStatesService {
     console.log(this.detailsState.grade.student);
 
     const grade = new Grade();
-    this.student.addGrade(Object.assign(grade, this.detailsState.grade));
+    this.student.addOrUpdate(Object.assign(grade, this.detailsState.grade));
     this.grid.selection.clear();
     this.grid.selection.toggle(grade);
   }

@@ -23,6 +23,7 @@
   },
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts3-angular": "^2.1.0",
     "@angular/animations": "^5.2.7",
     "@angular/cdk": "^5.2.4",
     "@angular/cli": "^1.6.0",
@@ -37,6 +38,8 @@
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
     "@octokit/rest": "^14.0.8",
+    "@swimlane/ngx-charts": "^7.1.1",
+    "amcharts-angular": "^1.1.0",
     "angularfire2": "^5.0.0-rc.6",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.4.6",

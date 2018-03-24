@@ -1,6 +1,6 @@
 import TestData from './testDataModel';
 
-export let stud: TestData = [
+export let students: TestData[] = [
   {
     'studentId': 1,
     'first_name': 'Tina',
