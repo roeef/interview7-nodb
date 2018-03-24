@@ -55,7 +55,6 @@ import {GridComponent} from './comp/grid/grid.component';
 import {HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing/app-routing.module';
 import {AppComponent} from './app.component';
-import {HomeComponent} from './comp/home/home.component';
 import {NotFoundComponent} from './comp/not-found/not-found.component';
 import {DetailsPanelComponent} from './comp/details-panel/details-panel.component';
 import {FilterComponent} from './comp/filter/filter.component';
@@ -66,6 +65,7 @@ import {ChartByCourseComponent} from './comp/chart-by-course/chart-by-course.com
 import {AppService} from './services/app.service';
 import {UiStatesService} from './services/ui-states.service';
 import {StudentService} from './services/student.service';
+import { ControlsComponent } from './comp/controls/controls.component';
 
 /**
  * NgModule that includes all Material modules that are required to serve
@@ -116,7 +116,8 @@ import {StudentService} from './services/student.service';
     MatNativeDateModule,
     MatPaginatorModule,
     MatSortModule
-  ]
+  ],
+  declarations: []
 })
 export class MaterialModule {}
 
@@ -126,7 +127,6 @@ export class MaterialModule {}
   declarations: [
     GridComponent,
     AppComponent,
-    HomeComponent,
     NotFoundComponent,
     DetailsPanelComponent,
     GridComponent,
@@ -134,7 +134,8 @@ export class MaterialModule {}
     DataComponent,
     StatsComponent,
     ChartByTimeComponent,
-    ChartByCourseComponent
+    ChartByCourseComponent,
+    ControlsComponent
   ],
   imports: [
     BrowserModule,

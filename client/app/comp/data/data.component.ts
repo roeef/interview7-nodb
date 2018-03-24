@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {UiStatesService} from '../../services/ui-states.service';
+import {StudentService} from '../../services/student.service';
 
 @Component({
   selector: 'app-data',
@@ -7,9 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataComponent implements OnInit {
 
+
   constructor() { }
 
   ngOnInit() {
   }
+
 
 }

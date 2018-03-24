@@ -36,43 +36,20 @@ export class GridComponent implements OnInit {
     return this.uiStateService.detailsState.hasCahnged;
   }
 
-  dataSource: SomeDataSourceModule | null;
+  get dataSource() {
+    return this.state.dataSource;
+  }
 
+  set dataSource( ds : SomeDataSourceModule) {
+    this.state.dataSource = ds;
+  }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filter') filter: ElementRef;
 
   ngOnInit() {
     this.dataSource = new SomeDataSourceModule(this.someDatabase, this.paginator, this.sort);
     console.log(this.dataSource);
-    // Observable for the filter
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
-      .subscribe(() => {
-        if (!this.dataSource) { return; }
-         this.dataSource.filter = this.filter.nativeElement.value;
-      });
-  }
-
-
-  deletedSelected() {
-    // Easly supports multi-select (just enable multi select on selection decleration loop on all selected array
-    console.log('clicked id:' + this.selection.selected[0]);
-    this.student.remove(this.selection.selected[0].id).then(() => {this.selection.clear(); console.log('deleted!'); });
-  }
-
-  addGrade() {
-    this.uiStateService.addGrade();
-  }
-
-  save() {
-    this.uiStateService.saveGrade();
-  }
-
-  discard() {
-    this.uiStateService.discard();
   }
 }
 

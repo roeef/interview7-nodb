@@ -1,18 +1,3 @@
-<div class="example-container mat-elevation-z8">
-  <div class="example-header">
-    <mat-input-container floatPlaceholder="never">
-      <input matInput #filter placeholder="Filter Grades and Students" [(ngModel)]="state.filtreValue">
-    </mat-input-container>
-    <div *ngIf="!hasChanged">
-      <button mat-raised-button color="primary" (click)="addGrade()">ADD NEW GRADE</button>
-      <button mat-raised-button	color="warn" (click)="deletedSelected()" [disabled]="selection.isEmpty()">DELETE SELECTED GRADE</button>
-    </div>
-    <div *ngIf="hasChanged">
-      <button mat-raised-button color="primary" (click)="save()">SAVE CHANGE</button>
-      <button mat-raised-button color="warn" (click)="discard()">DISCARD CHANGES</button>
-    </div>
-  </div>
-
   <mat-sidenav-container class="example-container">
     <mat-sidenav-content>
       <p>Data!!</p>
@@ -82,4 +67,3 @@
       <app-details-panel></app-details-panel>
     </mat-sidenav>
   </mat-sidenav-container>
-</div>

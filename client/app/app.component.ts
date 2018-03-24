@@ -11,5 +11,4 @@ export class AppComponent {
   title = 'app';
 
   constructor(public appService: AppService) { }
-  
 }

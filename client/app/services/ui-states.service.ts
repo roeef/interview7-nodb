@@ -2,8 +2,8 @@ import {ElementRef, Injectable} from '@angular/core';
 import Student from '../../models/student';
 import Grade from '../../models/grade';
 import {StudentService} from './student.service';
-import {SelectionChange, SelectionModel} from "@angular/cdk/collections";
-import {Subject} from "rxjs/Subject";
+import {DataSource, SelectionChange, SelectionModel} from '@angular/cdk/collections';
+import {SomeDataSourceModule} from '../modules/some-data-source/some-data-source.module';
 
 class DetailsState {
   grade: Grade = new Grade();
@@ -15,6 +15,7 @@ class DetailsState {
 class GridState {
   selection = new SelectionModel<Grade>(false, []);
   filtreValue: string;
+  dataSource: SomeDataSourceModule | null;
 }
 
 
@@ -22,10 +23,11 @@ class GridState {
 export class UiStatesService {
   detailsState: DetailsState = new DetailsState();
   grid: GridState = new GridState();
+  filterValue: string;
 
   constructor(private student: StudentService) {
     this.grid.selection.onChange.subscribe(x => {
-      console.log("Selection Changed");
+      console.log('Selection Changed');
       // On Selection Change check if a new selection is availble for editing
       if (x.added[0]) {
         // Copy object to seperate from grid... TODO consider moving copy to before slection would protect block changes
@@ -55,7 +57,7 @@ export class UiStatesService {
     console.log(this.detailsState.grade);
     console.log(this.detailsState.grade.student);
 
-    let grade = new Grade();
+    const grade = new Grade();
     this.student.addGrade(Object.assign(grade, this.detailsState.grade));
     this.grid.selection.clear();
     this.grid.selection.toggle(grade);
