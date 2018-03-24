@@ -5,6 +5,11 @@
   min-width: 300px;
 }
 
+mat-sidenav {
+  width: 400px;
+}
+
+
 .example-header {
   min-height: 56px;
   max-height: 56px;

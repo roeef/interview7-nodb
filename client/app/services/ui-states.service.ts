@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {ElementRef, Injectable} from '@angular/core';
 import Student from '../../models/student';
 import Grade from '../../models/grade';
 import {StudentService} from './student.service';
@@ -14,12 +14,15 @@ class DetailsState {
 
 class GridState {
   selection = new SelectionModel<Grade>(false, []);
+  filtreValue: string;
 }
+
 
 @Injectable()
 export class UiStatesService {
   detailsState: DetailsState = new DetailsState();
   grid: GridState = new GridState();
+
   constructor(private student: StudentService) {
     this.grid.selection.onChange.subscribe(x => {
       console.log("Selection Changed");
@@ -41,14 +44,6 @@ export class UiStatesService {
         this.detailsState.hasCahnged = false;
       }
     });
-    //     .addListener(
-    //     new ChangeListener<Tab>() {
-    //   @Override
-    //   public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-    //       System.out.println("Tab Selection changed");
-    //     }
-    //   }
-    // );
   }
 
   addGrade() {
@@ -67,6 +62,6 @@ export class UiStatesService {
   }
 
   discard() {
-
+    this.grid.selection.clear();
   }
 }
