@@ -24,7 +24,7 @@ mat-sidenav {
 .mat-input-container {
   font-size: 14px;
   flex-grow: 1;
-  margin:  8px 32px 0px;
+  margin:  8px 32px 0;
 }
 
 .example-no-results {

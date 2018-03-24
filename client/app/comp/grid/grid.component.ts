@@ -48,7 +48,9 @@ export class GridComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit() {
-    this.dataSource = new SomeDataSourceModule(this.someDatabase, this.paginator, this.sort);
+    if (!this.dataSource) {
+      this.dataSource = new SomeDataSourceModule(this.someDatabase, this.paginator, this.sort);
+    }
     console.log(this.dataSource);
   }
 }

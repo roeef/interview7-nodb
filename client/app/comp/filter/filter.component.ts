@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
 import {StudentService} from '../../services/student.service';
 import {UiStatesService} from '../../services/ui-states.service';
 

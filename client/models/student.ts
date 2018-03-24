@@ -16,7 +16,7 @@ export default class Student {
     this.country = country;
     this.grades = grades;
   }
-  dbId: string;
+  dbId?: string;
   studentId: string;
   first_name: string;
   last_name: string;
