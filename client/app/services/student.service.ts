@@ -44,27 +44,42 @@ export class StudentService {
   private gradesPath = 'grades';
   private studentsPath = 'students';
 
+  private static toPlainObjectDeepCopy(gradeData: Grade) {
+    return JSON.parse(JSON.stringify(gradeData.student));
+  }
+
   addOrUpdate(gradeData: Grade) {
-    // If no dbId and no Face match
-    for (const existing of this.studData) {
-      if (existing.studentId === gradeData.studentId && !gradeData.student.dbId) {
-        gradeData.student.dbId = existing.dbId;
-      }
-    }
+
+    // If no dbId check for student Id March - if found use match DB ID...
+    // THIS ummm assumin we will make good validation for DB ID - fo now this enables overwriting a user...
+    // not tequired and can be deleted .
+    console.log('check by student code', gradeData.student && gradeData.student.dbId, gradeData.student.dbId, gradeData.student);
 
     if (gradeData.student && gradeData.student.dbId) {
-      if (gradeData.student.dbId !== '-1') {
-        gradeData.student.dbId = '-1';
-        this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData))
-      } else if (!gradeData.student.dbId === ('-1')) {
-        console.log('add new student to db');
+      console.log('check by student code');
+      for (const existing of this.studData) {
+        console.log('sss');
+
+        if (existing.studentId === gradeData.studentId && !gradeData.student.dbId) {
+          console.log('existing');
+
+          gradeData.student.dbId = existing.dbId;
+        }
       }
+    }
+    console.log('add new student to db start');
+    if (gradeData.student && gradeData.student.dbId) {
+      if (gradeData.student.dbId !== '-1') {
+        console.log('add new student to db update only' );
+        // this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(StudentService.toPlainObjectDeepCopy(gradeData));
+      }
+    } else {
+        gradeData.student.dbId = '-1';
+        console.log('add new student to db');
     }
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
-    const toPlainObjectDeepCopy = (gradeData: Grade) => {
-      return JSON.parse(JSON.stringify(gradeData.student));
-    };
+  }
 
     // TODO
     // if(!gradeData.student.dbId) {
@@ -95,7 +110,7 @@ export class StudentService {
 // this.afs.collection(this.gradesPath).add(JSON.parse(JSON.stringify(gradeData))).then(() => {
 //   console.log('addStudent Done');
 // });
-  }
+
 
 
 
