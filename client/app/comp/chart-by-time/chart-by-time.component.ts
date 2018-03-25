@@ -4,8 +4,9 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import Grade from '../../../models/grade';
 import {StudentService} from '../../services/student.service';
 import AvgCounter from '../../../models/avgCounter';
+import {UiStatesService} from '../../services/ui-states.service';
+import {Observable} from 'rxjs/Observable';
 import moment = require("moment");
-import {UiStatesService} from "../../services/ui-states.service";
 
 @Component({
   selector: 'app-chart-by-time',
@@ -13,38 +14,26 @@ import {UiStatesService} from "../../services/ui-states.service";
   styleUrls: ['./chart-by-time.component.css']
 })
 export class ChartByTimeComponent implements OnInit, OnDestroy, AfterViewInit {
+
   chart: AmChart;
-  dataProvider;
-  private studentsChange: BehaviorSubject<Grade[]>;
+  dataProvider = [];
+  private studentsDataChange: BehaviorSubject<Grade[]> = this.studentsService.getGrades();
   constructor(private studentsService: StudentService, private uiState: UiStatesService,
               private AmCharts: AmChartsService) { }
+
+  displayDataChanges = [
+      this.uiState.stats.studentFilterChange,
+      this.studentsDataChange
+  ];
 
   ngOnInit() {
   }
 
   ngAfterViewInit() {
-    this.studentsChange = this.studentsService.getGrades();
-    this.studentsChange.subscribe(grades => {
+    this.studentsDataChange = this.studentsService.getGrades();
       // console.log(grades);
-      grades = this.filterGrader(grades);
-      const mapped = grades.
-      map((item) => {
-        // console.log(item);
-        return item ? {'date': moment(item.date).format('YYYY-MM-DD'), 'value': item.grade} : null;
-      });
+    this.prepareDataForChart();
 
-      this.dataProvider = mapped.reduce((acc, obj) => {
-        console.log(obj);
-        if (acc[obj.date]) {
-          acc[obj.date].addItem(obj.value);
-        } else {
-          acc[obj.date] = new AvgCounter(obj.value, obj.date);
-        }
-        return acc;
-        // return acc[obj.date] ? (new AvgCounter(obj.grade)) : acc[obj.date].addItem(obj.gradeDataChange);
-      }, {});
-
-    });
     console.log(this.dataProvider);
     this.chart = this.AmCharts.makeChart('chartdiv', {
       'hideCredits': true,
@@ -104,22 +93,53 @@ export class ChartByTimeComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       'dataProvider': Object.values(this.dataProvider)
     });
-    console.log('test');
-    const zoomChart = () => this.chart.zoomToIndexes(this.chart.dataProvider.length - 40, this.chart.dataProvider.length - 1);
+
+    let zoomChart = () => this.chart.zoomToIndexes(this.chart.dataProvider.length - 40, this.chart.dataProvider.length - 1);
     this.chart.addListener('rendered', zoomChart);
     zoomChart();
-    //
-    // var zoomChart = function() {
-    //   this.chart.zoomToIndexes(this.chart.dataProvider.length - 40, this.chart.dataProvider.length - 1);
-    // }
+
+    Observable.merge(...this.displayDataChanges).subscribe(() => {
+      this.prepareDataForChart();
+      console.log("aaabbb",this.dataProvider);
+      this.AmCharts.updateChart(this.chart, () => {
+        this.chart.dataProvider = Object.values(this.dataProvider);
+      });
+    });
+
+    zoomChart = function() {
+      this.chart.zoomToIndexes(this.chart.dataProvider.length - 40, this.chart.dataProvider.length - 1);
+    };
   }
 
-  private filterGrader(grades) {
+  private prepareDataForChart() {
+    this.dataProvider = this.reduce(this.mapGrades(this.filterGrade(this.studentsDataChange.getValue())));
+  }
+
+  private reduce(mapped: any) {
+    return mapped.reduce((acc, obj) => {
+      if (acc[obj.date]) {
+        acc[obj.date].addItem(obj.value);
+      } else {
+        acc[obj.date] = new AvgCounter(obj.value, obj.date);
+      }
+      return acc;
+      // return acc[obj.date] ? (new AvgCounter(obj.grade)) : acc[obj.date].addItem(obj.gradeDataChange);
+    }, {});
+  }
+
+  private mapGrades(grades) {
+    const mapped = grades.map((item) => {
+      return item ? {'date': moment(item.date).format('YYYY-DD-MM'), 'value': item.grade} : null;
+    });
+    return mapped;
+  }
+
+  private filterGrade(grades) {
     grades = grades.filter(x => {
       if (0 >= x.grade) {
         return false;
       }
-      if (!this.uiState.stats.studentFilter || this.uiState.stats.studentFilter.includes('-1' )) {
+      if (!this.uiState.stats.studentFilter || this.uiState.stats.studentFilter.length == 0 || this.uiState.stats.studentFilter.includes('-1' )) {
         return true;
       }
       return this.uiState.stats.studentFilter.includes(x.studentId);

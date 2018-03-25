@@ -3,7 +3,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import Grade from '../../models/grade';
 import Student from '../../models/student';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {students} from "../../models/mock.data";
+import {students} from '../../models/mock.data';
 
 
 @Injectable()
@@ -11,12 +11,13 @@ export class StudentService {
   grades: Grade[] = [];
   students: Student[] = [];
   constructor(private afs: AngularFirestore) {
-    // For generating Mocks for dev test usage you run a few:
-    // for (let i = 0; i < 100; i++) { this.addUser(); }
+    this.getDB().subscribe(value =>
+      this.studDBChange.next(value)
+    );
     for (const student of students) {
-      const newS = new Student();
-      Object.assign(newS, student);
-      newS.date = new Date(newS.date);
+      const newS = new Student(student);
+      // Object.assign(newS, student);
+      // newS.date = new Date(newS.date);
       // newS.grades = [];
       for (const g of student.grades) {
         const newG = new Grade();
@@ -30,8 +31,9 @@ export class StudentService {
 
 
   /** Stream that emits whenever the data has been modified. */
-  studDataChange: BehaviorSubject<Student[]> = new BehaviorSubject<Student[]>([]);
-  get studData(): Student[] { return this.studDataChange.value; }
+  studDBChange: BehaviorSubject<Student[]> = new BehaviorSubject<Student[]>([]);
+  studDataChangeAsValuesArray = this.studDBChange.map(x => Object.values(x));
+  get studData(): Student[] { return this.studDBChange.value; }
 
   gradeDataChange: BehaviorSubject<Grade[]> = new BehaviorSubject<Grade[]>(this.grades);
   get gradeData(): Grade[] { return this.gradeDataChange.value; }
@@ -43,20 +45,44 @@ export class StudentService {
   private studentsPath = 'students';
 
   addOrUpdate(gradeData: Grade) {
-    console.log('addStudent Started');
-    if (!this.students[gradeData.student.dbId]) {
-      this.students[gradeData.student.studentId] = gradeData.student;
-      this.studDataChange.next(this.students);
+    if (!this.studData.includes(gradeData.student)) {
+      // TODO
+      // if(!gradeData.student.dbId) {
+      //   this.afs.collection(this.studentsPath).add(this.toPlainObjectDeepCopy(gradeData));
+      // } else {
+      //   this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData));
+      // }
     }
+    // console.log('addStudent Started');
+    // if (!this.students[gradeData.student.studentId]) {
+    //   this.students[gradeData.student.studentId] = gradeData.student;
+    //     // this.studDataChange.next(this.students);
+    //     // console.log(this.students);
+    //     // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
+    //     //   console.log('addStudent Done');
+    //     // });
+    // } else {
+    //   Object.assign(this.students[gradeData.student.studentId], gradeData.student);
+    // }
+      // TODO this.studDataChange.next(this.students);
+      console.log(this.students);
+      // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
+      //   console.log('addStudent Done');
+      // });
+    // }
     // this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
 
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
-    // this.afs.collection(this.gradesPath).add(this.getDbObjectFormat(gradeData)).then(() => {
+    // this.afs.collection(this.gradesPath).add(JSON.parse(JSON.stringify(gradeData))).then(() => {
     //   console.log('addStudent Done');
     // });
   }
 
+
+  private toPlainObjectDeepCopy(gradeData: Grade) {
+    return JSON.parse(JSON.stringify(gradeData.student));
+  }
 
   private getDbObjectFormat(studentData: Grade) {
     return {
@@ -89,6 +115,29 @@ export class StudentService {
     // });
   }
   getStudents() {
-    return this.studDataChange;
+    return this.getDB();
   }
+
+  getDB() {
+      return this.afs.collection(this.studentsPath, ref => ref.orderBy('studentId')).
+    snapshotChanges().map( changes => {
+      console.log('snapshotChanges');
+      return changes.map(a => {
+
+        const data = a.payload.doc.data();
+        const id = a.payload.doc.id;
+        // if (id != data.dbId) {
+        //   data.dbId = id;
+        //   this.afs.doc(this.studentsPath + '/' + id).set(data);
+        // }
+        return new Student({id, ...data});
+      });
+    });
+
+  }
+
+
+//   getFgetStudents {
+//
+// }
 }

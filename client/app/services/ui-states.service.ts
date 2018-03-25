@@ -46,7 +46,7 @@ export class UiStatesService {
         // Copy object to seperate from grid... TODO consider moving copy to before slection would protect block changes
         Object.assign(this.detailsState.grade, x.added[0]);
         this.detailsState.grade.student = Object.assign(new Student(), x.added[0].student);
-        this.detailsState.grade.date = Object.assign(new Date(), x.added[0].date);
+        this.detailsState.grade.date = new Date(x.added[0].date);
 
         // change from new to edit mode
         this.detailsState.isNew = false;
