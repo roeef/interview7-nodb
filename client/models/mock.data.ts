@@ -75,7 +75,7 @@ export let students: TestData[] = [
     'date': '9/26/2015',
     'address': '1765 Hooker Terrace',
     'country': 'Mexico',
-    'Zip': '93826',
+    'zip': '93826',
     'grades': [
       {
         'grade': 58,
@@ -311,7 +311,7 @@ export let students: TestData[] = [
     'date': '11/18/2015',
     'address': '92983 Wayridge Center',
     'country': 'Sweden',
-    'Zip': '386 35',
+    'zip': '386 35',
     'grades': [
       {
         'grade': 92,
@@ -510,7 +510,7 @@ export let students: TestData[] = [
     'date': '1/25/2016',
     'address': '49729 Huxley Road',
     'country': 'Spain',
-    'Zip': '28045',
+    'zip': '28045',
     'grades': [
       {
         'grade': 59,

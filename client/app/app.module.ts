@@ -66,9 +66,7 @@ import {AppService} from './services/app.service';
 import {UiStatesService} from './services/ui-states.service';
 import {StudentService} from './services/student.service';
 import { ControlsComponent } from './comp/controls/controls.component';
-// Ngx-Charts
-import {NgxChartsModule} from '@swimlane/ngx-charts';
-import {AmChartsModule} from "@amcharts/amcharts3-angular";
+import {AmChartsModule} from '@amcharts/amcharts3-angular';
 
 /**
  * NgModule that includes all Material modules that are required to serve
@@ -153,7 +151,6 @@ export class MaterialModule {}
     MatDatepickerModule, MatNativeDateModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    NgxChartsModule,
     AmChartsModule
   ],
   providers: [

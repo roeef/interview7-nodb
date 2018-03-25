@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl} from "@angular/forms";
-import {StudentService} from "../../services/student.service";
-import {UiStatesService} from "../../services/ui-states.service";
+import {FormControl} from '@angular/forms';
+import {StudentService} from '../../services/student.service';
+import {UiStatesService} from '../../services/ui-states.service';
 
 @Component({
   selector: 'app-stats',
@@ -9,11 +9,15 @@ import {UiStatesService} from "../../services/ui-states.service";
   styleUrls: ['./stats.component.css']
 })
 export class StatsComponent implements OnInit {
-  toppings = new FormControl();
-  toppingList = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
-
   constructor(private studService: StudentService, private uiState: UiStatesService) {
   }
+  formControl = new FormControl();
+  selected = [];
+  get state() {
+    return this.uiState.stats;
+  }
+
+
 
   get studentService() {
     return this.studService;

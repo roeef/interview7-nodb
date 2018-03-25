@@ -1,7 +1,10 @@
 <mat-form-field>
-  <mat-select placeholder="Toppings" [formControl]="toppings" multiple>
-    <mat-option *ngFor="let student of this.studentService.studDataChange| async" [value]="student">{{student ? student.first_name : "All"}}</mat-option>
+  <mat-select placeholder="Toppings" [formControl]="formControl" multiple [(ngModel)]="this.state.studentFilter">
+    <mat-option *ngFor="let student of this.studentService.studDataChange| async"
+                [value]="student ? student.studentId : -1">
+      {{student ? (student.last_name +", "+student.first_name) : ""}}</mat-option>
   </mat-select>
 </mat-form-field>
+{{ this.state.studentFilter }}
 <app-chart-by-time></app-chart-by-time>
 <app-chart-by-course></app-chart-by-course>

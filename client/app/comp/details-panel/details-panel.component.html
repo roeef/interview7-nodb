@@ -48,7 +48,7 @@
   </mat-form-field>
   <mat-form-field>
     <mat-label>Grade</mat-label>
-    <input matInput [(ngModel)]="grade.grade" name="grade">
+    <input type="number" matInput [(ngModel)]="grade.grade" name="grade">
   </mat-form-field>
   <mat-form-field>
     <input matInput [matDatepicker]="picker2" placeholder="Date of Grade" [(ngModel)]="grade.date" name="grade_date">

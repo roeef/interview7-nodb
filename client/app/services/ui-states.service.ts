@@ -4,6 +4,7 @@ import Grade from '../../models/grade';
 import {StudentService} from './student.service';
 import {DataSource, SelectionChange, SelectionModel} from '@angular/cdk/collections';
 import {SomeDataSourceModule} from '../modules/some-data-source/some-data-source.module';
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 class DetailsState {
   grade: Grade = new Grade();
@@ -19,11 +20,23 @@ class GridState {
 }
 
 
+class StatsPageState {
+  studentFilterChange = new BehaviorSubject<string>('');
+  set studentFilter(x: string) {
+    this.studentFilterChange.next(x);
+  }
+  get studentFilter() {
+    return this.studentFilterChange.getValue();
+  }
+  courseFilter;
+}
+
 @Injectable()
 export class UiStatesService {
   detailsState: DetailsState = new DetailsState();
   grid: GridState = new GridState();
   filterValue: string;
+  stats = new StatsPageState();
 
   constructor(private student: StudentService) {
     this.grid.selection.onChange.subscribe(x => {

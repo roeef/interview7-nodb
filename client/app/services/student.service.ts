@@ -44,7 +44,7 @@ export class StudentService {
 
   addOrUpdate(gradeData: Grade) {
     console.log('addStudent Started');
-    if (!this.students[gradeData.student.studentId]) {
+    if (!this.students[gradeData.student.dbId]) {
       this.students[gradeData.student.studentId] = gradeData.student;
       this.studDataChange.next(this.students);
     }

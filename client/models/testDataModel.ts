@@ -10,5 +10,5 @@ export default class TestData {
   address: string;
   zip?: string;
   country?: string;
-  grades: Grade[] = [];
+  grades: Object[] = [];
 }
