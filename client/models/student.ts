@@ -4,7 +4,8 @@ const defaultStudent = {studentId: null, first_name: '', last_name: '', date: nu
   address: '', zip: '', country: '', grades: [], dbId: null, id: null }
 export default class Student {
   static count = 1;
-  constructor(param = defaultStudent) {
+  constructor(param?) {
+    if (!param) {param = defaultStudent; }
     this.dbId = param.dbId;
     this.studentId = param.studentId;
     this.first_name = param.first_name;

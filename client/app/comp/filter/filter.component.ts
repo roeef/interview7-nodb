@@ -9,11 +9,18 @@ import {UiStatesService} from '../../services/ui-states.service';
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit {
+  state: UiStatesService;
 
-  constructor(private uiStateService: UiStatesService) { }
-  get state() {
-    return this.uiStateService;
+  constructor(private uiStateService: UiStatesService) {
+    this.state = uiStateService;
   }
+  // get state() {
+  //   return t
+  // his.uiStateService;
+  // }
+  // set state(x) {
+  //   this.uiStateService = x;
+  // }
 
   get dataSource() {
     return this.uiStateService.grid.dataSource;

@@ -6,7 +6,7 @@ import {StudentService} from '../../services/student.service';
 import AvgCounter from '../../../models/avgCounter';
 import {UiStatesService} from '../../services/ui-states.service';
 import {Observable} from 'rxjs/Observable';
-import moment = require("moment");
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-chart-by-time',

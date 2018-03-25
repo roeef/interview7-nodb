@@ -15,7 +15,7 @@ class DetailsState {
 
 class GridState {
   selection = new SelectionModel<Grade>(false, []);
-  filtreValue: string;
+  filtreValue?: string;
   dataSource: SomeDataSourceModule | null;
 }
 

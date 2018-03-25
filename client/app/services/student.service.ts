@@ -45,44 +45,59 @@ export class StudentService {
   private studentsPath = 'students';
 
   addOrUpdate(gradeData: Grade) {
-    if (!this.studData.includes(gradeData.student)) {
-      // TODO
-      // if(!gradeData.student.dbId) {
-      //   this.afs.collection(this.studentsPath).add(this.toPlainObjectDeepCopy(gradeData));
-      // } else {
-      //   this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData));
-      // }
+    // If no dbId and no Face match
+    for (const existing of this.studData) {
+      if (existing.studentId === gradeData.studentId && !gradeData.student.dbId) {
+        gradeData.student.dbId = existing.dbId;
+      }
     }
-    // console.log('addStudent Started');
-    // if (!this.students[gradeData.student.studentId]) {
-    //   this.students[gradeData.student.studentId] = gradeData.student;
-    //     // this.studDataChange.next(this.students);
-    //     // console.log(this.students);
-    //     // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
-    //     //   console.log('addStudent Done');
-    //     // });
-    // } else {
-    //   Object.assign(this.students[gradeData.student.studentId], gradeData.student);
-    // }
-      // TODO this.studDataChange.next(this.students);
-      console.log(this.students);
-      // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
-      //   console.log('addStudent Done');
-      // });
-    // }
-    // this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
 
+    if (gradeData.student && gradeData.student.dbId) {
+      if (gradeData.student.dbId !== '-1') {
+        gradeData.student.dbId = '-1';
+        this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData))
+      } else if (!gradeData.student.dbId === ('-1')) {
+        console.log('add new student to db');
+      }
+    }
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
-    // this.afs.collection(this.gradesPath).add(JSON.parse(JSON.stringify(gradeData))).then(() => {
-    //   console.log('addStudent Done');
-    // });
+    const toPlainObjectDeepCopy = (gradeData: Grade) => {
+      return JSON.parse(JSON.stringify(gradeData.student));
+    };
+
+    // TODO
+    // if(!gradeData.student.dbId) {
+    //   this.afs.collection(this.studentsPath).add(this.toPlainObjectDeepCopy(gradeData));
+    // } else {
+    //   this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData));
+    // }
+
+// console.log('addStudent Started');
+// if (!this.students[gradeData.student.studentId]) {
+//   this.students[gradeData.student.studentId] = gradeData.student;
+//     // this.studDataChange.next(this.students);
+//     // console.log(this.students);
+//     // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
+//     //   console.log('addStudent Done');
+//     // });
+// } else {
+//   Object.assign(this.students[gradeData.student.studentId], gradeData.student);
+// }
+// TODO this.studDataChange.next(this.students);
+// console.log(this.students);
+// this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
+//   console.log('addStudent Done');
+// });
+// }
+// this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
+
+// this.afs.collection(this.gradesPath).add(JSON.parse(JSON.stringify(gradeData))).then(() => {
+//   console.log('addStudent Done');
+// });
   }
 
 
-  private toPlainObjectDeepCopy(gradeData: Grade) {
-    return JSON.parse(JSON.stringify(gradeData.student));
-  }
 
   private getDbObjectFormat(studentData: Grade) {
     return {
@@ -99,7 +114,7 @@ export class StudentService {
       this.gradeDataChange.next(this.grades);
       resolve();
     });
-    // return this.afs.doc(`${this.gradesPath}/${id}`).delete();
+// return this.afs.doc(`${this.gradesPath}/${id}`).delete();
   }
 
   getGrades() {
@@ -119,7 +134,7 @@ export class StudentService {
   }
 
   getDB() {
-      return this.afs.collection(this.studentsPath, ref => ref.orderBy('studentId')).
+    return this.afs.collection(this.studentsPath, ref => ref.orderBy('studentId')).
     snapshotChanges().map( changes => {
       console.log('snapshotChanges');
       return changes.map(a => {
