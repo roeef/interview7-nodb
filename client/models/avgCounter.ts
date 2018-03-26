@@ -1,4 +1,4 @@
-import {_countGroupLabelsBeforeOption} from "@angular/material";
+import {_countGroupLabelsBeforeOption} from '@angular/material';
 
 export default class AvgCounter {
   private _sum;

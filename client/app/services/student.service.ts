@@ -45,27 +45,14 @@ export class StudentService {
     console.log('addStudent Started');
     if (!this.students[gradeData.student.studentId]) {
       this.students[gradeData.student.studentId] = gradeData.student;
-        // this.studDataChange.next(this.students);
-        // console.log(this.students);
-        // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
-        //   console.log('addStudent Done');
-        // });
     } else {
       Object.assign(this.students[gradeData.student.studentId], gradeData.student);
     }
       this.studDataChange.next(this.students);
       console.log(this.students);
-      // this.afs.collection(this.studentsPath).add(JSON.parse(JSON.stringify(gradeData.student))).then(() => {
-      //   console.log('addStudent Done');
-      // });
-    // }
-    // this.students[gradeData.student.dbId].grades[gradeData.id] = gradeData;
 
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
-    // this.afs.collection(this.gradesPath).add(JSON.parse(JSON.stringify(gradeData))).then(() => {
-    //   console.log('addStudent Done');
-    // });
   }
 
 
@@ -86,7 +73,6 @@ export class StudentService {
       this.gradeDataChange.next(this.grades);
       resolve();
     });
-    // return this.afs.doc(`${this.gradesPath}/${id}`).delete();
   }
 
   private getGradeById(id: string) {
@@ -97,30 +83,8 @@ export class StudentService {
 
   getGrades() {
     return this.gradeDataChange;
-    // return this.afs.collection(this.gradesPath, ref => ref.orderBy('studentId')).
-    // snapshotChanges().map( changes => {
-    //   console.log('snapshotChanges');
-    //   return changes.map(a => {
-    //     const data = a.payload.doc.data();
-    //     const id = a.payload.doc.id;
-    //     return {id, ...data};
-    //   });
-    // });
   }
   getStudents() {
     return this.studDataChange;
   }
-    // snapshotChanges().map( changes => {
-    //   console.log('snapshotChanges');
-    //   return changes.map(a => {
-    //     const data = a.payload.doc.data();
-    //     const id = a.payload.doc.id;
-    //     return {id, ...data};
-    //   });
-    // });  }
-
-
-//   getFgetStudents {
-//
-// }
 }

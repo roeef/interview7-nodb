@@ -4,7 +4,7 @@ import Grade from '../../models/grade';
 import {StudentService} from './student.service';
 import {DataSource, SelectionChange, SelectionModel} from '@angular/cdk/collections';
 import {SomeDataSourceModule} from '../modules/some-data-source/some-data-source.module';
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 class DetailsState {
   grade: Grade = new Grade();
@@ -28,7 +28,6 @@ class StatsPageState {
   get studentFilter() {
     return this.studentFilterChange.getValue();
   }
-  courseFilter;
 }
 
 @Injectable()
