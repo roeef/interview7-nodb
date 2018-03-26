@@ -4,9 +4,8 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import Grade from '../../../models/grade';
 import {StudentService} from '../../services/student.service';
 import AvgCounter from '../../../models/avgCounter';
+import moment = require('moment');
 import {UiStatesService} from '../../services/ui-states.service';
-import {Observable} from 'rxjs/Observable';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-chart-by-time',
@@ -98,7 +97,7 @@ export class ChartByTimeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chart.addListener('rendered', zoomChart);
     zoomChart();
 
-    Observable.merge(...this.displayDataChanges).subscribe(() => {
+    this.uiState.stats.studentFilterChange.subscribe(() => {
       this.prepareDataForChart();
       console.log("aaabbb",this.dataProvider);
       this.AmCharts.updateChart(this.chart, () => {
@@ -117,6 +116,7 @@ export class ChartByTimeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private reduce(mapped: any) {
     return mapped.reduce((acc, obj) => {
+      console.log(obj);
       if (acc[obj.date]) {
         acc[obj.date].addItem(obj.value);
       } else {
