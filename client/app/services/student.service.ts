@@ -6,27 +6,40 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {students} from '../../models/mock.data';
 
 
+function injectSomeTestData() {
+  for (const student of students) {
+    const newS = new Student(student);
+    // Object.assign(newS, student);
+    // newS.date = new Date(newS.date);
+    // newS.grades = [];
+    for (const g of student.grades) {
+      const newG = new Grade();
+      Object.assign(newG, g);
+      newG.date = new Date(newG.date);
+      newG.student = newS;
+      console.log("Add Test Data user ss");
+      this.addOrUpdate(newG);
+    }
+  }
+}
+
 @Injectable()
 export class StudentService {
+  static hasInjected: boolean = false;
   grades: Grade[] = [];
-  students: Student[] = [];
   constructor(private afs: AngularFirestore) {
-    this.getDB().subscribe(value =>
-      this.studDBChange.next(value)
-    );
-    for (const student of students) {
-      const newS = new Student(student);
-      // Object.assign(newS, student);
-      // newS.date = new Date(newS.date);
-      // newS.grades = [];
-      for (const g of student.grades) {
-        const newG = new Grade();
-        Object.assign(newG, g);
-        newG.date = new Date(newG.date);
-        newG.student = newS;
-        this.addOrUpdate(newG);
+    this.getDB().subscribe(value => {
+        console.log("Updated DB CHANGE sss");
+        this.studDBChange.next(value);
       }
-    }
+    );
+    this.getDB().subscribe(() => {
+      if (!StudentService.hasInjected) {
+        console.log("inject sss");
+        StudentService.hasInjected = true;
+        injectSomeTestData.call(this);
+      }
+    });
   }
 
 
@@ -53,40 +66,40 @@ export class StudentService {
     // If no dbId check for student Id March - if found use match DB ID...
     // THIS ummm assumin we will make good validation for DB ID - fo now this enables overwriting a user...
     // not tequired and can be deleted .
-    console.log('check by student code', gradeData.student && gradeData.student.dbId, gradeData.student.dbId, gradeData.student);
+    console.log('check by student code sss', gradeData.student && gradeData.student.dbId, gradeData.student.dbId, gradeData.student);
 
-    if (gradeData.student && gradeData.student.dbId) {
-      console.log('check by student code');
+    if (gradeData.student && !gradeData.student.dbId) {
+      console.log('check by student code sss', this.studData);
       for (const existing of this.studData) {
-        console.log('sss');
+        console.log('search existing from DB sss');
 
         if (existing.studentId === gradeData.studentId && !gradeData.student.dbId) {
-          console.log('existing');
-
+          console.log('existing  found assigned DB ID sss', existing.dbId);
           gradeData.student.dbId = existing.dbId;
         }
       }
     }
-    console.log('add new student to db start');
-    if (gradeData.student && gradeData.student.dbId) {
+    console.log('add new student to db start sss');
+    if (gradeData.student && !gradeData.student.dbId) {
+      gradeData.student.dbId = '-1';
+      console.log('add new student to db new only sss' );
+
+    } else {
       if (gradeData.student.dbId !== '-1') {
-        console.log('add new student to db update only' );
+        console.log('update student to db sss');
         // this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(StudentService.toPlainObjectDeepCopy(gradeData));
       }
-    } else {
-        gradeData.student.dbId = '-1';
-        console.log('add new student to db');
     }
     this.grades[gradeData.id] = gradeData;
     this.gradeDataChange.next(this.grades);
   }
 
-    // TODO
-    // if(!gradeData.student.dbId) {
-    //   this.afs.collection(this.studentsPath).add(this.toPlainObjectDeepCopy(gradeData));
-    // } else {
-    //   this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData));
-    // }
+  // TODO
+  // if(!gradeData.student.dbId) {
+  //   this.afs.collection(this.studentsPath).add(this.toPlainObjectDeepCopy(gradeData));
+  // } else {
+  //   this.afs.doc(this.studentsPath + '/' + gradeData.student.dbId).set(this.toPlainObjectDeepCopy(gradeData));
+  // }
 
 // console.log('addStudent Started');
 // if (!this.students[gradeData.student.studentId]) {
@@ -160,7 +173,8 @@ export class StudentService {
         //   data.dbId = id;
         //   this.afs.doc(this.studentsPath + '/' + id).set(data);
         // }
-        return new Student({id, ...data});
+        data.dbId = id;
+        return new Student(data);
       });
     });
 
