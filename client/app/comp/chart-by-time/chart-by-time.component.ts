@@ -6,6 +6,7 @@ import {StudentService} from '../../services/student.service';
 import AvgCounter from '../../../models/avgCounter';
 import moment = require('moment');
 import {UiStatesService} from '../../services/ui-states.service';
+import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'app-chart-by-time',
@@ -97,7 +98,7 @@ export class ChartByTimeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chart.addListener('rendered', zoomChart);
     zoomChart();
 
-    this.uiState.stats.studentFilterChange.subscribe(() => {
+    Observable.merge(...this.displayDataChanges).subscribe(() => {
       this.prepareDataForChart();
       console.log("aaabbb",this.dataProvider);
       this.AmCharts.updateChart(this.chart, () => {

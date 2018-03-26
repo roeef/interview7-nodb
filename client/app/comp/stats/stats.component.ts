@@ -24,9 +24,6 @@ export class StatsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.studentService.getStudents().subscribe(value =>
-      console.log(value)
-    );
   }
 
 }
